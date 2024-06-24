@@ -35,6 +35,9 @@ class MainActivity : ComponentActivity() {
 fun CurrencyConverterApp() {
     var inputAmount by remember { mutableStateOf("") }
     var convertedAmount by remember { mutableStateOf("Converted Amount: ") }
+    var fromCurrency by remember { mutableStateOf("USD") }
+    var toCurrency by remember { mutableStateOf("EUR") }
+    val currencies = listOf("USD", "EUR", "BRL", "JPY")
 
     Column(
         modifier = Modifier
@@ -61,6 +64,12 @@ fun CurrencyConverterApp() {
                 .fillMaxWidth()
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        CurrencyDropdownMenu(currencies, fromCurrency) { fromCurrency = it }
+        Spacer(modifier = Modifier.height(8.dp))
+        CurrencyDropdownMenu(currencies, toCurrency) { toCurrency = it }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
@@ -72,5 +81,31 @@ fun CurrencyConverterApp() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = convertedAmount)
+    }
+}
+
+@Composable
+fun CurrencyDropdownMenu(currencies: List<String>, selectedCurrency: String, onCurrencySelected: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        Button(onClick = { expanded = true }) {
+            Text(selectedCurrency)
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            currencies.forEach { currency ->
+                DropdownMenuItem(
+                    text = { Text(currency) },
+                    onClick = {
+                        onCurrencySelected(currency)
+                        expanded = false
+                    }
+                )
+            }
+        }
     }
 }
