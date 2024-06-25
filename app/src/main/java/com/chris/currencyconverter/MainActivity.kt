@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.chris.currencyconverter.ui.theme.CurrencyConverterTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,8 @@ fun CurrencyConverterApp() {
     var toCurrency by remember { mutableStateOf("EUR") }
     val currencies = listOf("USD", "EUR", "BRL", "JPY")
 
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -56,7 +59,9 @@ fun CurrencyConverterApp() {
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    // Placeholder for conversion logic
+                    coroutineScope.launch {
+                        convertedAmount = convertCurrency(inputAmount.toDoubleOrNull(), fromCurrency, toCurrency)
+                    }
                 }
             ),
             modifier = Modifier
@@ -73,7 +78,9 @@ fun CurrencyConverterApp() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            // Placeholder for button click logic
+            coroutineScope.launch {
+                convertedAmount = convertCurrency(inputAmount.toDoubleOrNull(), fromCurrency, toCurrency)
+            }
         }) {
             Text(text = "Convert")
         }
@@ -123,6 +130,6 @@ fun convertCurrency(amount: Double?, fromCurrency: String, toCurrency: String): 
 
     val rate = conversionRates[fromCurrency]?.get(toCurrency) ?: return "Conversion rate not found"
 
-    val convertedAmount = amount * rate;
-    return "Converted Amount: $convertedAmount $toCurrency";
+    val convertedAmount = amount * rate
+    return "Converted Amount: $convertedAmount $toCurrency"
 }
