@@ -109,3 +109,20 @@ fun CurrencyDropdownMenu(currencies: List<String>, selectedCurrency: String, onC
         }
     }
 }
+
+fun convertCurrency(amount: Double?, fromCurrency: String, toCurrency: String): String {
+    if (amount == null) {
+        return "Invalid amount"
+    }
+    val conversionRates = mapOf(
+        "USD" to mapOf("EUR" to 0.85, "BRL" to 5.20, "JPY" to 110.00),
+        "EUR" to mapOf("USD" to 1.18, "BRL" to 6.10, "JPY" to 129.53),
+        "BRL" to mapOf("USD" to 0.19, "EUR" to 0.16, "JPY" to 21.30),
+        "JPY" to mapOf("USD" to 0.0091, "EUR" to 0.0077, "BRL" to 0.047)
+    )
+
+    val rate = conversionRates[fromCurrency]?.get(toCurrency) ?: return "Conversion rate not found"
+
+    val convertedAmount = amount * rate;
+    return "Converted Amount: $convertedAmount $toCurrency";
+}
